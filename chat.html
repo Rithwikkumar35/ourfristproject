@@ -1,0 +1,56 @@
+import React, { useState, useEffect } from "react";
+import { db } from "./firebase"; // Firebase setup
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+
+export default function ChatPage({ chatId, user }) {
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    const q = query(collection(db, "chats", chatId, "messages"), orderBy("timestamp"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setMessages(snapshot.docs.map(doc => doc.data()));
+    });
+    return unsubscribe;
+  }, [chatId]);
+
+  const sendMessage = async () => {
+    if (text.trim()) {
+      await addDoc(collection(db, "chats", chatId, "messages"), {
+        text,
+        sender: user.uid,
+        timestamp: Date.now(),
+      });
+      setText("");
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <div className="p-4 bg-blue-500 text-white font-bold">
+        Chat with {user.otherName}
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-scroll p-4 bg-gray-100">
+        {messages.map((msg, i) => (
+          <div key={i} className={p-2 my-1 ${msg.sender === user.uid ? "text-right" : "text-left"}}>
+            <span className="inline-block bg-white rounded-xl px-3 py-2 shadow">{msg.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Input */}
+      <div className="p-4 bg-white flex gap-2">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type a message..."
+          className="flex-1 border rounded-full px-4 py-2"
+        />
+        <button onClick={sendMessage} className="bg-blue-500 text-white rounded-full px-4 py-2">Send</button>
+      </div>
+    </div>
+  );
+}
