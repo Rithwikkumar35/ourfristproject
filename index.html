@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>signup</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Description - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    higi
-    <h1>Signup Pages</h1>
-    <form action="/signup" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="ok">Sign Up</button>
-    </form>
-    <h1>day 1</h1>
-    <footer>
-      <p>hi   jjuhftdri</p>
-    </footer>
+  <div class="container">
+    <h1 id="welcomeMessage">Welcome to Description</h1>
+    <p>Find your lost items or report something you lost.</p>
+
+    <!-- Navigation Cards -->
+    <div class="cards">
+      <div class="card" onclick="goToPage('loginindex.html')">
+        <div class="icon">🔑</div>
+        <h3>Login</h3>
+        <p>Access your account</p>
+      </div>
+      <div class="card" onclick="goToPage('signup1.html')">
+        <div class="icon">📝</div>
+        <h3>Sign Up</h3>
+        <p>Create a new account</p>
+      </div>
+      <div class="card" onclick="goToPage('report.html')">
+        <div class="icon">📌</div>
+        <h3>Report Lost Item</h3>
+        <p>Submit a lost item report</p>
+      </div>
+      <div class="card" onclick="goToPage('view.html')">
+        <div class="icon">📋</div>
+        <h3>View Lost Items</h3>
+        <p>Check all reported items</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats">
+      <h3>Quick Stats</h3>
+      <p id="lostItemsCount">Total Lost Items Reported: 0</p>
+    </div>
+  </div>
+
+  <script src="scriptmain.js"></script>
 </body>
 </html>
