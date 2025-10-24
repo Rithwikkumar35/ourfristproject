@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Found Items</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .modal { display: none; }
+        .modal.is-open { display: flex; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 10l-2.5 2.5M10 10l2.5 2.5"></path></svg>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900">Lost & Found</h1>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-4">
+                     <a href="lost_page2.html" class="text-slate-600 hover:text-indigo-600 transition-colors px-3 py-2 rounded-md text-sm">Lost Page</a>
+                     <a href="found.html" class="text-indigo-600 font-semibold px-3 py-2 rounded-md text-sm">Found Page</a>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg id="menu-open-icon" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                        <svg id="menu-close-icon" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+             <!-- Mobile menu, show/hide based on menu state. -->
+            <div class="md:hidden hidden" id="mobile-menu">
+                <div class="pt-2 pb-3 space-y-1">
+                    <a href="lost_items_responsive.html" class="border-transparent text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Lost Page</a>
+                    <a href="found.html" class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Found Page</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <!-- Hero Section -->
+        <section class="text-center bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200 mb-12">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Found Something?</h2>
+            <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-600 mb-8">
+                Report an item you've found to help reunite it with its owner. Provide as much detail as you can to help us find a match.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button onclick="openModal()" class="w-full sm:w-auto bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105">
+                    Report a Found Item
+                </button>
+                 <a href="lost_page2.html" class="w-full sm:w-auto bg-slate-200 text-slate-800 font-semibold py-3 px-8 rounded-lg hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-all transform hover:scale-105">
+                    Browse Lost Items
+                </a>
+            </div>
+        </section>
+        
+        <!-- Items Section -->
+        <section id="items">
+            <!-- Filters -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Search Input -->
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-slate-700">Search by keyword</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <input type="text" id="search" onkeyup="applyFilters()" placeholder="e.g., Blue iPhone, Set of Keys" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-md">
+                        </div>
+                    </div>
+                    <!-- Filter by Category -->
+                    <div>
+                        <label for="category-filter" class="block text-sm font-medium text-slate-700">Category</label>
+                        <select id="category-filter" onchange="applyFilters()" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="all">All Categories</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="keys">Keys</option>
+                            <option value="wallets">Wallets & Bags</option>
+                            <option value="pets">Pets</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <!-- Sort by Date -->
+                    <div>
+                        <label for="sort-filter" class="block text-sm font-medium text-slate-700">Sort by</label>
+                        <select id="sort-filter" onchange="applyFilters()" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            <div id="no-items-message" class="hidden text-center py-12">
+                <h3 class="text-2xl font-semibold text-slate-500">No items found</h3>
+                <p class="text-slate-400 mt-2">Try adjusting your filters or search terms.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-300 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <p>&copy; 2025 Lost & Found Hub. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Report Item Modal -->
+    <div id="report-modal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto transition-transform duration-300 transform scale-95">
+            <div class="p-6 md:p-8">
+                <!-- Form View -->
+                <form id="report-form" class="space-y-5">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Report a Found Item</h3>
+                            <p class="text-sm text-slate-500">Please provide as much detail as possible.</p>
+                        </div>
+                        <button type="button" onclick="closeModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <input type="hidden" id="item-status" name="status" value="found">
+                    <div><label for="item-name" class="block text-sm font-medium text-slate-700">Item Name</label><input type="text" id="item-name" placeholder="e.g., Blue iPhone" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"></div>
+                    <div>
+                        <div class="flex justify-between items-center"><label for="item-description" class="block text-sm font-medium text-slate-700">Description</label></div>
+                        <textarea id="item-description" rows="3" placeholder="Describe the item, its condition, and any identifying marks." required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"></textarea>
+                    </div>
+                    <div><label for="item-category" class="block text-sm font-medium text-slate-700">Category</label><select id="item-category" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"><option value="" disabled selected>Select a category</option><option value="electronics">Electronics</option><option value="keys">Keys</option><option value="wallets">Wallets & Bags</option><option value="pets">Pets</option><option value="other">Other</option></select></div>
+                    <div><label for="item-location" class="block text-sm font-medium text-slate-700">Location Found</label><input type="text" id="item-location" placeholder="e.g., RK Beach, near the submarine museum" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"></div>
+                    <div><label for="item-date" class="block text-sm font-medium text-slate-700">Date Found</p><input type="date" id="item-date" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"></div>
+                    <div><label for="contact-info" class="block text-sm font-medium text-slate-700">Your Contact Email</label><input type="email" id="contact-info" placeholder="you@example.com" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"></div>
+                    <div class="flex items-center justify-end pt-4 space-x-3"><button type="button" onclick="closeModal()" class="bg-white py-2 px-4 border border-slate-300 rounded-md shadow-sm text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button><button type="submit" class="inline-flex justify-center py-2 px-4 border shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Submit Report</button></div>
+                </form>
+                <!-- Success View -->
+                <div id="success-view" class="hidden text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"><svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>
+                    <h3 class="text-xl font-bold text-slate-900 mt-4">Report Submitted!</h3>
+                    <p class="text-slate-600 mt-2">Thank you for helping our community!</p>
+                    <button onclick="closeModal()" class="mt-6 w-full bg-slate-200 text-slate-800 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal fixed inset-0 z-50 items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div id="detail-modal-content" class="p-6 md:p-8"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        // This is the database of FOUND items for this page.
+        let items = [
+            { id: 101, status: 'found', name: 'Blue iPhone', description: 'Found an iPhone with a cracked screen near Grand Central. The background is a golden dog.', category: 'electronics', location: 'Grand Central Station', date: '2025-10-18', imageUrl: 'https://placehold.co/600x400/2980b9/ffffff?text=Found+iPhone'},
+            { id: 102, status: 'found', name: 'Leather Wallet', description: 'A wallet was left on the A-train. It feels like it has cards inside.', category: 'wallets', location: 'Subway', date: '2025-10-16', imageUrl: 'https://placehold.co/600x400/2c3e50/ffffff?text=Found+Wallet'},
+            { id: 103, status: 'found', name: 'A single key', description: 'Found a single, lonely key on a park bench.', category: 'keys', location: 'Bryant Park', date: '2025-10-17', imageUrl: 'https://placehold.co/600x400/f1c40f/ffffff?text=Found+Key'},
+            { id: 104, status: 'found', name: 'Golden Retriever Dog', description: 'Friendly golden retriever found wandering near the park entrance. Has a blue collar but no tags.', category: 'pets', location: 'Central Park', date: '2025-10-19', imageUrl: 'https://placehold.co/600x400/e67e22/ffffff?text=Found+Dog'}
+        ];
+
+        // --- DOM ELEMENTS ---
+        const itemsGrid = document.getElementById('items-grid');
+        const noItemsMessage = document.getElementById('no-items-message');
+        const reportModal = document.getElementById('report-modal');
+        const reportForm = document.getElementById('report-form');
+        const detailModal = document.getElementById('detail-modal');
+        const detailModalContent = document.getElementById('detail-modal-content');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuOpenIcon = document.getElementById('menu-open-icon');
+        const menuCloseIcon = document.getElementById('menu-close-icon');
+
+        // --- RENDER & FILTER FUNCTIONS ---
+        function renderItems(itemsToRender) {
+            itemsGrid.innerHTML = '';
+            noItemsMessage.classList.toggle('hidden', itemsToRender.length > 0);
+            itemsGrid.classList.toggle('hidden', itemsToRender.length === 0);
+
+            itemsToRender.forEach(item => {
+                const card = `
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-slate-200 flex flex-col">
+                        <div class="h-48 overflow-hidden"><img class="w-full h-full object-cover" src="${item.imageUrl}" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e0e0e0/757575?text=Image+Not+Found';"></div>
+                        <div class="p-5 flex flex-col flex-grow">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-green-100 text-green-800">Found</span>
+                                <p class="text-xs text-slate-500">${new Date(item.date).toLocaleDateString()}</p>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 truncate">${item.name}</h3>
+                            <p class="text-sm text-slate-600 mt-1 flex-grow">${item.description.substring(0, 80)}${item.description.length > 80 ? '...' : ''}</p>
+                            <div class="mt-4 pt-4 border-t border-slate-200">
+                                <div class="flex items-center text-sm text-slate-500">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span class="truncate">${item.location}</span>
+                                </div>
+                            </div>
+                             <button onclick="openDetailModal(${item.id})" class="mt-4 w-full bg-indigo-50 text-indigo-700 font-semibold py-2 px-4 rounded-lg hover:bg-indigo-100">View Details & Contact</button>
+                        </div>
+                    </div>`;
+                itemsGrid.innerHTML += card;
+            });
+        }
+        
+        function applyFilters() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const sortFilter = document.getElementById('sort-filter').value;
+            let filteredItems = items.filter(item => 
+                (item.name.toLowerCase().includes(searchTerm) || item.description.toLowerCase().includes(searchTerm) || item.location.toLowerCase().includes(searchTerm)) &&
+                (categoryFilter === 'all' || item.category === categoryFilter)
+            );
+            filteredItems.sort((a, b) => sortFilter === 'newest' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
+            renderItems(filteredItems);
+        }
+
+        // --- MODAL HANDLING ---
+        function openModal() {
+            reportForm.reset();
+            document.getElementById('report-form').classList.remove('hidden');
+            document.getElementById('success-view').classList.add('hidden');
+            reportModal.classList.add('is-open');
+            reportModal.querySelector('.transform').classList.remove('scale-95');
+        }
+
+        function closeModal() {
+            const modal = reportModal.querySelector('.transform');
+            if (modal) {
+                 modal.classList.add('scale-95');
+            }
+            reportModal.classList.remove('is-open');
+            setTimeout(() => {
+                document.getElementById('report-form').classList.remove('hidden');
+                document.getElementById('success-view').classList.add('hidden');
+                reportForm.reset();
+            }, 300);
+        }
+
+        function openDetailModal(itemId) {
+            const item = items.find(i => i.id === itemId);
+            if (!item) return;
+            detailModalContent.innerHTML = `
+                <div class="flex items-start justify-between mb-4"><h3 class="text-xl sm:text-2xl font-bold text-slate-900">${item.name}</h3><button onclick="closeDetailModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+                <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-64 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e0e0e0/757575?text=Image+Not+Found';">
+                <div class="space-y-3 text-slate-700">
+                    <p><strong class="font-semibold text-slate-800">Status:</strong> <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full bg-green-100 text-green-800">Found</span></p>
+                    <p><strong class="font-semibold text-slate-800">Description:</strong> ${item.description}</p>
+                    <p><strong class="font-semibold text-slate-800">Location Found:</strong> ${item.location}</p>
+                    <p><strong class="font-semibold text-slate-800">Date Found:</strong> ${new Date(item.date).toLocaleDateString()}</p>
+                </div>
+                <div class="mt-6 pt-4 border-t">
+                    <button class="w-full bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700">Contact Poster</button>
+                </div>`;
+            detailModal.classList.add('is-open');
+        }
+
+        function closeDetailModal() { detailModal.classList.remove('is-open'); }
+
+        // --- EVENT LISTENERS ---
+        reportForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                status: 'found',
+                name: document.getElementById('item-name').value,
+                description: document.getElementById('item-description').value,
+                category: document.getElementById('item-category').value,
+                location: document.getElementById('item-location').value,
+                date: document.getElementById('item-date').value,
+                imageUrl: `https://placehold.co/600x400/27ae60/ffffff?text=${encodeURIComponent(document.getElementById('item-name').value)}`
+            };
+            items.push(newItem);
+            applyFilters();
+            
+            document.getElementById('report-form').classList.add('hidden');
+            document.getElementById('success-view').classList.remove('hidden');
+        });
+        
+        // Mobile Menu Toggle
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuOpenIcon.classList.toggle('hidden');
+            menuOpenIcon.classList.toggle('block');
+            menuCloseIcon.classList.toggle('hidden');
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeDetailModal();
+            }
+        });
+        reportModal.addEventListener('click', (e) => e.target === reportModal && closeModal());
+        detailModal.addEventListener('click', (e) => e.target === detailModal && closeDetailModal());
+        document.addEventListener('DOMContentLoaded', () => applyFilters());
+    </script>
+</body>
+</html>
