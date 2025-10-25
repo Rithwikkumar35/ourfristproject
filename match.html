@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matches - Lost & Found</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0066cc;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .navbar-menu a:hover {
+      color: #0066cc;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #1a1a1a;
+      margin-bottom: 32px;
+    }
+
+    .matches-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .match-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .match-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .match-score {
+      background: #0066cc;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .match-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .item-details {
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .item-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .item-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .item-category {
+      display: inline-block;
+      background: #e3f2fd;
+      color: #0066cc;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .item-info {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .match-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .btn-accept {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-accept:hover {
+      background: #45a049;
+    }
+
+    .btn-reject {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-reject:hover {
+      background: #d32f2f;
+    }
+
+    .btn-chat {
+      background: #0066cc;
+      color: white;
+    }
+
+    .btn-chat:hover {
+      background: #0052a3;
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-accepted {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .empty-state a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #0066cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .empty-state a:hover {
+      background: #0052a3;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">Lost & Found</div>
+    <div class="navbar-menu">
+      <a href="/home.html">Home</a>
+      <a href="/lost.html">Report Lost</a>
+      <a href="/found.html">Report Found</a>
+      <a href="/match.html">Matches</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Your Matches</h1>
+    <div id="matches-container" class="matches-grid"></div>
+  </div>
+
+  <script type="module">
+    import { checkAuth, getCurrentUser } from './js/auth.js';
+    import { supabase } from './js/supabase-client.js';
+
+    async function init() {
+      await checkAuth();
+      await loadMatches();
+    }
+
+    async function loadMatches() {
+      const user = await getCurrentUser();
+      const container = document.getElementById('matches-container');
+
+      const { data: matches, error } = await supabase
+        .from('matches')
+        .select(`
+          *,
+          lost_items (*),
+          found_items (*)
+        `)
+        .or(`lost_user_id.eq.${user.id},found_user_id.eq.${user.id}`)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading matches:', error);
+        return;
+      }
+
+      if (!matches || matches.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h2>No Matches Yet</h2>
+            <p>Report lost or found items to start finding matches</p>
+            <a href="/lost.html">Report Lost Item</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = matches.map(match => {
+        const isLostUser = match.lost_user_id === user.id;
+        const userStatus = isLostUser ? match.lost_user_status : match.found_user_status;
+        const otherStatus = isLostUser ? match.found_user_status : match.lost_user_status;
+
+        const bothAccepted = match.lost_user_status === 'accepted' && match.found_user_status === 'accepted';
+
+        return `
+          <div class="match-card">
+            <div class="match-header">
+              <h3>Match Found</h3>
+              <div class="match-score">${match.match_score}% Match</div>
+            </div>
+            <div class="match-content">
+              <div class="item-details">
+                <div class="item-label">Lost Item</div>
+                <div class="item-title">${match.lost_items.title}</div>
+                <span class="item-category">${match.lost_items.category}</span>
+                <div class="item-info"><strong>Description:</strong> ${match.lost_items.description}</div>
+                <div class="item-info"><strong>Lost Date:</strong> ${new Date(match.lost_items.lost_date).toLocaleDateString()}</div>
+                <div class="item-info"><strong>Location:</strong> ${match.lost_items.lost_location}</div>
+                ${isLostUser ? '<div class="status-badge status-accepted">Your Item</div>' : ''}
+              </div>
+              <div class="item-details">
+                <div class="item-label">Found Item</div>
+                <div class="item-title">${match.found_items.title}</div>
+                <span class="item-category">${match.found_items.category}</span>
+                <div class="item-info"><strong>Description:</strong> ${match.found_items.description}</div>
+                <div class="item-info"><strong>Found Date:</strong> ${new Date(match.found_items.found_date).toLocaleDateString()}</div>
+                <div class="item-info"><strong>Location:</strong> ${match.found_items.found_location}</div>
+                ${!isLostUser ? '<div class="status-badge status-accepted">Your Item</div>' : ''}
+              </div>
+            </div>
+            <div>
+              <strong>Your Status:</strong> <span class="status-badge status-${userStatus}">${userStatus.toUpperCase()}</span>
+              <strong style="margin-left: 20px;">Other User Status:</strong> <span class="status-badge status-${otherStatus}">${otherStatus.toUpperCase()}</span>
+            </div>
+            <div class="match-actions">
+              ${userStatus === 'pending' ? `
+                <button class="btn btn-accept" onclick="handleMatch('${match.id}', 'accepted', ${isLostUser})">Accept Match</button>
+                <button class="btn btn-reject" onclick="handleMatch('${match.id}', 'rejected', ${isLostUser})">Reject Match</button>
+              ` : ''}
+              ${bothAccepted ? `
+                <button class="btn btn-chat" onclick="window.location.href='/chat.html?match=${match.id}'">Open Chat</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.handleMatch = async function(matchId, status, isLostUser) {
+      const updateField = isLostUser ? 'lost_user_status' : 'found_user_status';
+
+      const { error } = await supabase
+        .from('matches')
+        .update({ [updateField]: status })
+        .eq('id', matchId);
+
+      if (error) {
+        console.error('Error updating match:', error);
+        return;
+      }
+
+      if (status === 'accepted') {
+        const { data: match } = await supabase
+          .from('matches')
+          .select('*, lost_user_id, found_user_id, lost_user_status, found_user_status')
+          .eq('id', matchId)
+          .single();
+
+        if (match && match.lost_user_status === 'accepted' && match.found_user_status === 'accepted') {
+          const { data: existingRoom } = await supabase
+            .from('chat_rooms')
+            .select('id')
+            .eq('match_id', matchId)
+            .maybeSingle();
+
+          if (!existingRoom) {
+            await supabase
+              .from('chat_rooms')
+              .insert({
+                match_id: matchId,
+                lost_user_id: match.lost_user_id,
+                found_user_id: match.found_user_id
+              });
+
+            await supabase
+              .from('notifications')
+              .insert([
+                {
+                  user_id: match.lost_user_id,
+                  type: 'match_accepted',
+                  match_id: matchId,
+                  message: 'Match accepted! You can now chat.',
+                  is_read: false
+                },
+                {
+                  user_id: match.found_user_id,
+                  type: 'match_accepted',
+                  match_id: matchId,
+                  message: 'Match accepted! You can now chat.',
+                  is_read: false
+                }
+              ]);
+          }
+        }
+      }
+
+      await loadMatches();
+    };
+
+    init();
+  </script>
+</body>
+</html>
