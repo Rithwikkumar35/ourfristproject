@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - Lost & Found</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0066cc;
+    }
+
+    .navbar-menu {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .navbar-menu a:hover {
+      color: #0066cc;
+    }
+
+    .chat-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 140px);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+
+    .chat-header h2 {
+      font-size: 20px;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .match-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .match-info div {
+      padding: 8px;
+      background: white;
+      border-radius: 6px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message-sent {
+      align-self: flex-end;
+      background: #0066cc;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-received {
+      align-self: flex-start;
+      background: #e9ecef;
+      color: #1a1a1a;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .chat-input {
+      padding: 20px;
+      border-top: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-container input:focus {
+      border-color: #0066cc;
+    }
+
+    .send-btn {
+      padding: 12px 24px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .send-btn:hover {
+      background: #0052a3;
+    }
+
+    .send-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">Lost & Found</div>
+    <div class="navbar-menu">
+      <a href="/home.html">Home</a>
+      <a href="/lost.html">Report Lost</a>
+      <a href="/found.html">Report Found</a>
+      <a href="/match.html">Matches</a>
+    </div>
+  </nav>
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Chat</h2>
+      <div id="match-info" class="match-info"></div>
+    </div>
+
+    <div id="chat-messages" class="chat-messages">
+      <div class="loading">Loading chat...</div>
+    </div>
+
+    <div class="chat-input">
+      <div class="input-container">
+        <input type="text" id="message-input" placeholder="Type your message..." />
+        <button class="send-btn" id="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { checkAuth, getCurrentUser } from './js/auth.js';
+    import { supabase } from './js/supabase-client.js';
+
+    let currentUserId;
+    let chatRoomId;
+    let messagesSubscription;
+
+    async function init() {
+      await checkAuth();
+      const user = await getCurrentUser();
+      currentUserId = user.id;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const matchId = urlParams.get('match');
+
+      if (!matchId) {
+        window.location.href = '/match.html';
+        return;
+      }
+
+      await loadChatRoom(matchId);
+      setupMessageInput();
+    }
+
+    async function loadChatRoom(matchId) {
+      const { data: chatRoom, error: roomError } = await supabase
+        .from('chat_rooms')
+        .select(`
+          *,
+          matches (
+            *,
+            lost_items (*),
+            found_items (*)
+          )
+        `)
+        .eq('match_id', matchId)
+        .maybeSingle();
+
+      if (roomError || !chatRoom) {
+        console.error('Error loading chat room:', roomError);
+        document.getElementById('chat-messages').innerHTML = '<div class="empty-state">Chat room not found</div>';
+        return;
+      }
+
+      chatRoomId = chatRoom.id;
+
+      const matchInfo = document.getElementById('match-info');
+      matchInfo.innerHTML = `
+        <div>
+          <strong>Lost Item:</strong> ${chatRoom.matches.lost_items.title}<br>
+          <small>${chatRoom.matches.lost_items.description}</small>
+        </div>
+        <div>
+          <strong>Found Item:</strong> ${chatRoom.matches.found_items.title}<br>
+          <small>${chatRoom.matches.found_items.description}</small>
+        </div>
+      `;
+
+      await loadMessages();
+      subscribeToMessages();
+    }
+
+    async function loadMessages() {
+      const { data: messages, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('chat_room_id', chatRoomId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading messages:', error);
+        return;
+      }
+
+      displayMessages(messages);
+    }
+
+    function displayMessages(messages) {
+      const container = document.getElementById('chat-messages');
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet. Start the conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => {
+        const isSent = msg.sender_id === currentUserId;
+        const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <div class="message ${isSent ? 'message-sent' : 'message-received'}">
+            <div>${msg.message}</div>
+            <div class="message-time">${time}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function subscribeToMessages() {
+      messagesSubscription = supabase
+        .channel('chat-messages')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'chat_messages',
+            filter: `chat_room_id=eq.${chatRoomId}`
+          },
+          (payload) => {
+            loadMessages();
+          }
+        )
+        .subscribe();
+    }
+
+    function setupMessageInput() {
+      const input = document.getElementById('message-input');
+      const sendBtn = document.getElementById('send-btn');
+
+      const sendMessage = async () => {
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        sendBtn.disabled = true;
+
+        try {
+          const { error } = await supabase
+            .from('chat_messages')
+            .insert({
+              chat_room_id: chatRoomId,
+              sender_id: currentUserId,
+              message: message
+            });
+
+          if (error) throw error;
+
+          input.value = '';
+        } catch (error) {
+          console.error('Error sending message:', error);
+          alert('Failed to send message');
+        } finally {
+          sendBtn.disabled = false;
+          input.focus();
+        }
+      };
+
+      sendBtn.addEventListener('click', sendMessage);
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+    }
+
+    window.addEventListener('beforeunload', () => {
+      if (messagesSubscription) {
+        supabase.removeChannel(messagesSubscription);
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
